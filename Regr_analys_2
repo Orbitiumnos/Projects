@@ -1,0 +1,47 @@
+import numpy as np
+import pandas as pd
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+
+df = pd.read_csv(r'C:\Games\Ekonometrika\contest_test.csv')
+df.head(10)
+
+data = ['FEATURE_33','FEATURE_34','FEATURE_35','FEATURE_36','FEATURE_37']
+data_2 = ['FEATURE_33','FEATURE_34','FEATURE_35','FEATURE_36','FEATURE_37','TARGET']
+
+train_data = pd.read_csv(r'C:\Games\Ekonometrika\contest_train.csv').loc[:, data_2]
+train_data.head(10)
+
+lda = LinearDiscriminantAnalysis().fit(train_data[data], train_data.TARGET)
+
+def get_df_coef(lda, features, ):
+    return pd.DataFrame(
+        np.vstack([lda.intercept_, lda.coef_.T]),
+        index=["Intercept"] + features,
+        columns=lda.classes_
+    )
+
+df_coef = get_df_coef(lda, data)
+df_coef
+
+def LDA_predict(lda, X):
+    return pd.DataFrame(
+        lda.predict(X),
+        columns=["TARGET"],
+        index=X.index
+    )
+
+lda_predict_train = LDA_predict(lda, train_data[data])
+(lda_predict_train.TARGET == train_data.TARGET).value_counts(normalize=True)
+lda_predict_train.head(10)
+
+lda_predict = LDA_predict(lda, df[data])
+lda_predict.head(1000)
+#df.head(10)
+
+#df.head(100)
+#df1 = df.iloc[:,30:100]
+#df1.head(100)
+
+data_to_excel = df[data]
+data_to_excel["Results lda"] = lda_predict
+data_to_excel.to_csv("C:\Games\Ekonometrika\contest_answer.csv")
