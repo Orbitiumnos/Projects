@@ -22,6 +22,8 @@ increment by 1;
 
 -xsl-
 
+-xsl-
+
 <?xml version="1.0"?>
  <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"> 
    <xsl:template match = "/"> 
@@ -32,8 +34,10 @@ increment by 1;
     <body>
         <xsl:for-each select = "objects/object"> 
         <div> 
-        INSERT INTO specialities (s_id, s_name, code, s_level, s_levelid, generation, generationid, s_type, s_typeid) VALUES </div> 
+        INSERT INTO specialities (id, name, code, level, level-id, generation, generation-id, type, type-id) VALUES 
+	</div> 
     <div>(
+    <xsl:text>seq1.nextval</xsl:text>,
     <xsl:value-of select="id + 10000"/>,
     '<xsl:value-of select="name"/>',
     '<xsl:value-of select="code"/>',
@@ -43,9 +47,9 @@ increment by 1;
     <xsl:value-of select="generation-id"/>,
     '<xsl:value-of select="type"/>',
     <xsl:value-of select="type-id"/>
-    );</div>
+    );
+    </div>
     </xsl:for-each>
-    
    </body> 
    </html>   
    </xsl:template> 
