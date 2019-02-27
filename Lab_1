@@ -1,0 +1,81 @@
+-sql-
+
+CREATE TABLE Specialities (
+    type1 varchar2(5 char),
+    id int,
+    type2 varchar2(7 char),
+	name varchar2(102 char),
+	code varchar2(8 char),
+	leve1 varchar2(12 char) CHECK (leve1 in ('Специалитет','Магистратура','Бакалавриат','Аспирантура')), --12
+	level_id int CHECK (level_id in (1, 2, 3, 0)),
+	type3 varchar2(7 char),
+	generation varchar2(10 char) CHECK (generation in ('ФГОС3+','ГОС2')), --6
+	generation_id int CHECK (generation_id in (0,1)),
+	type4 varchar2(7 char),
+	type5 varchar2(26 char) CHECK (type5 in ('направление','специальность')), --13
+	type_id int CHECK (type_id in (0,1)),
+	type6 varchar2(7 char) 
+);
+
+create sequence posl1 start with 1
+increment by 1;
+
+-xsl-
+
+<?xml version="1.0"?>
+ <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"> 
+   <xsl:template match = "/"> 
+    <html> 
+    <head> 
+     <title>Some SQL stuff</title> 
+    </head>
+    <body>
+        <xsl:for-each select = "objects/object"> 
+        <div> 
+        INSERT INTO specialities (s_id, s_name, code, s_level, s_levelid, generation, generationid, s_type, s_typeid) VALUES </div> 
+    <div>(
+    <xsl:value-of select="id + 10000"/>,
+    '<xsl:value-of select="name"/>',
+    '<xsl:value-of select="code"/>',
+    '<xsl:value-of select="level"/>',
+    <xsl:value-of select="level-id"/>,
+    '<xsl:value-of select="generation"/>',
+    <xsl:value-of select="generation-id"/>,
+    '<xsl:value-of select="type"/>',
+    <xsl:value-of select="type-id"/>
+    );</div>
+    </xsl:for-each>
+    
+   </body> 
+   </html>   
+   </xsl:template> 
+</xsl:stylesheet>
+
+-xml-
+
+<?xml version="1.0" encoding="UTF-8"?>
+<objects type="array">
+  <object>
+    <id type="integer">307</id>
+    <name>Технологии разделения изотопов и ядерное топливо</name>
+    <code>14.05.03</code>
+    <level>Специалитет</level>
+    <level-id type="integer">1</level-id>
+    <generation>ФГОС3+</generation>
+    <generation-id type="integer">1</generation-id>
+    <type>специальность</type>
+    <type-id type="integer">1</type-id>
+  </object>
+  <object>
+    <id type="integer">308</id>
+    <name>Ядерные физика и технологии</name>
+    <code>14.04.02</code>
+    <level>Магистратура</level>
+    <level-id type="integer">2</level-id>
+    <generation>ФГОС3+</generation>
+    <generation-id type="integer">1</generation-id>
+    <type>направление</type>
+    <type-id type="integer">0</type-id>
+  </object>
+</objects>
+
