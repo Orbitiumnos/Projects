@@ -1,26 +1,22 @@
 -sql-
 
-CREATE TABLE Specialities (
-    type1 varchar2(5 char),
-    id int,
-    type2 varchar2(7 char),
+CREATE TABLE specialities (
+    id int NOT NULL, 
 	name varchar2(102 char),
-	code varchar2(8 char),
-	leve1 varchar2(12 char) CHECK (leve1 in ('Специалитет','Магистратура','Бакалавриат','Аспирантура')), --12
-	level_id int CHECK (level_id in (1, 2, 3, 0)),
-	type3 varchar2(7 char),
+	code varchar2(8 char),   
+	level_name varchar2(12 char) CHECK (level_name in ('Специалитет','Магистратура','Бакалавриат','Аспирантура')), --12
+	level_id int CHECK (level_id in (1, 2, 3, 0)),	
 	generation varchar2(10 char) CHECK (generation in ('ФГОС3+','ГОС2')), --6
-	generation_id int CHECK (generation_id in (0,1)),
-	type4 varchar2(7 char),
-	type5 varchar2(26 char) CHECK (type5 in ('направление','специальность')), --13
-	type_id int CHECK (type_id in (0,1)),
-	type6 varchar2(7 char) 
+	generation_id int CHECK (generation_id in (0,1)),	
+	type varchar2(26 char) CHECK (type in ('направление','специальность')), --13
+	type_id int CHECK (type_id in (0,1))
 );
 
-create sequence posl1 start with 1
+create sequence seq1 start with 500
 increment by 1;
 
--xsl-
+DROP SEQUENCE seq1;
+DROP TABLE specialities;
 
 -xsl-
 
@@ -34,11 +30,10 @@ increment by 1;
     <body>
         <xsl:for-each select = "objects/object"> 
         <div> 
-        INSERT INTO specialities (id, name, code, level, level-id, generation, generation-id, type, type-id) VALUES 
+        INSERT INTO specialities (id, name, code, level, level_id, generation, generation_id, type, type_id) VALUES 
 	</div> 
     <div>(
     <xsl:text>seq1.nextval</xsl:text>,
-    <xsl:value-of select="id + 10000"/>,
     '<xsl:value-of select="name"/>',
     '<xsl:value-of select="code"/>',
     '<xsl:value-of select="level"/>',
@@ -58,6 +53,7 @@ increment by 1;
 -xml-
 
 <?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type='text/xsl' href='transitionscopy.xsl'?>
 <objects type="array">
   <object>
     <id type="integer">307</id>
