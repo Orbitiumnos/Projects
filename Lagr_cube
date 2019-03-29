@@ -1,0 +1,42 @@
+def cube(n, num, s):
+    #print("start of iteration {0}".format(num+1))
+    
+    res = False
+    k = n
+    num = num+1
+    
+    while k**3 > n:
+        k = k-1    
+    
+    if k == 0:
+        return True,s
+    
+    if num > 7:
+        return False,s
+    
+    while res != True:
+        #print("   {0}-{1} = {3} : ({2}^3) : {4}".format(n,k**3,k,n-(k)**3,num))
+        res,s = cube(n-(k)**3, num,s)
+        k = k-1
+        if k==0:
+            break
+    
+    #print("end of iteration {0}".format(num+1))
+    
+    if num == 1:    
+        if res == False:
+                print(0)
+
+    if res == True:
+        s = s + str(k+1) + ' '
+        return True,s
+    else:
+        return False,s
+
+n = int(input())
+num = 0
+s = ''
+cuberes, s = cube(n, num, s)
+print(s)
+
+#23
