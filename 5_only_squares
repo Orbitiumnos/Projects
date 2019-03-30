@@ -1,0 +1,16 @@
+def square(s):
+    
+    n = int(input())
+    
+    if n == 0:
+        return s
+    
+    s = square(s)
+    
+    if (n**(0.5))%1==0:
+        s = s + ' ' + str(n)
+    
+    return s
+
+s = ''
+print(square(s))
