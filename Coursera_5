@@ -1,0 +1,97 @@
+#sample
+for i in range(1, 11):
+    for j in range(1, 11):
+        print(i * j, end=' ')
+    print()
+    
+#5_ryad_1
+a = int(input())
+b = int(input())
+for i in range (a,b+1):
+    print(i, end = ' ')
+    
+#5_ryad_2
+a = int(input())
+b = int(input())
+if a<=b:
+    for i in range (a,b+1,1):
+        print(i, end = ' ')
+else:
+    for i in range (a,b-1,-1):
+        print(i, end = ' ')
+        
+#5_ryad_3
+n = int(input())
+
+for i in range(10**(n),0,-1):
+    if i%2 != 0:
+        print(i, end = ' ')
+        
+#5_summ_kvad
+n = int(input())
+sum = 0
+
+for i in range(1,n+1,1):
+    sum = sum + i**2
+
+print(sum)
+
+#5_flagi
+n = int(input())
+i = 1
+
+flag = ('+___ ','|3 / ','|__\ ','|    ')
+
+for j in range(4):
+        if j == 1:
+            for i in range(n):
+                print('|'+str(i+1)+' /', end = ' ')
+            print('')
+        else:
+            print(flag[j] * n)
+
+#5_colvo nuley
+
+n = int(input())
+i = 0
+tupl = ()
+
+while i != n:
+    num = str(input())
+    tupl = tupl + tuple(num)
+    i = i+1
+
+num = 0
+
+for i in range(n):
+    if int(tupl[i]) == 0:
+        num = num + 1
+        
+print(num)
+
+#5_lesenka
+
+n = int(input())
+for j in range(n+1):
+    for i in range(j):
+        print(i+1, end='')
+    print('')
+    
+#5_zamech_chisla_1
+for i in range(10,100,1):
+    #print(i)
+    if i == 2*(i//10)*(i%10):
+        print(i)
+
+#5_uravnenie
+a = int(input())
+b = int(input())
+c = int(input())
+d = int(input())
+e = int(input())
+
+for x in range(0,1001):
+    if x!=e:
+        if (a*(x**3)+b*(x**2)+c*x+d)/(x-e) == 0:
+            print(x)
+        print ((a*(x**3)+b*(x**2)+c*x+d)/(x-e))
