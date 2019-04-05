@@ -1,0 +1,51 @@
+#https://habr.com/ru/post/267041/
+
+from sklearn import datasets
+from sklearn.manifold import TSNE
+import matplotlib.pyplot as plt
+import pandas as pd
+import numpy as np
+ 
+iris = datasets.load_iris()
+data = pd.DataFrame(data= np.c_[iris['data'], iris['target']],
+                     columns= iris['feature_names'] + ['target'])
+data.head()
+
+iris_df = data.iloc[:,0:4]
+iris_df.head()
+
+col1 = ['sepal width (cm)','petal length (cm)','petal width (cm)']
+col2 = ['sepal length (cm)','petal length (cm)','petal width (cm)']
+col3 = ['sepal length (cm)','sepal width (cm)','petal width (cm)']
+col4 = ['sepal length (cm)', 'sepal width (cm)','petal length (cm)']
+
+
+X_1 = TSNE(n_components=2).fit_transform(iris_df.loc[:,col1])
+X_2 = TSNE(n_components=2).fit_transform(iris_df.loc[:,col2])
+X_3 = TSNE(n_components=2).fit_transform(iris_df.loc[:,col3])
+X_4 = TSNE(n_components=2).fit_transform(iris_df.loc[:,col4])
+    
+fig = plt.figure(figsize=(15,15))
+   
+ax1 = fig.add_subplot(221)
+ax1.scatter(X_1[:, 0], X_1[:, 1], 
+    c=data['target'].map({1: 'dodgerblue', 2: 'lawngreen', 0: 'mediumvioletred'}));
+    
+ax2 = fig.add_subplot(222)
+ax2.scatter(X_2[:, 0], X_2[:, 1], 
+    c=data['target'].map({1: 'dodgerblue', 2: 'lawngreen', 0: 'mediumvioletred'}));
+    
+ax3 = fig.add_subplot(223)
+ax3.scatter(X_3[:, 0], X_3[:, 1], 
+    c=data['target'].map({1: 'dodgerblue', 2: 'lawngreen', 0: 'mediumvioletred'}));
+    
+ax4 = fig.add_subplot(224)
+ax4.scatter(X_4[:, 0], X_4[:, 1], 
+    c=data['target'].map({1: 'dodgerblue', 2: 'lawngreen', 0: 'mediumvioletred'}));
+      
+ax1.set_title('1');
+ax2.set_title('2');
+ax3.set_title('3');
+ax4.set_title('4');
+    
+plt.show()
