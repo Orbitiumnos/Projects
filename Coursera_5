@@ -146,20 +146,113 @@ B = int(input())
 for i in range(A,B+1):
     if i == ((i%10%10%10)*1000 + (i%100//10)*100 + (i%1000//100)*10 + (i//1000)):
         print(i)
+
+#5 Четные индексы
+A = list(map(int,input().split()))
+B=[]
+for i in range(0,len(A),2):
+    B.append(A[i])  
+print(' '.join(list(map(str,B))))
+
+#5 Четные элементы
+A = list(map(int,input().split()))
+B=[]
+for i in range(0,len(A)):
+    if A[i]%2==0:
+        B.append(A[i])  
+print(' '.join(list(map(str,B))))
+
+#5 Количество положительных
+A = list(map(int,input().split()))
+B=[]
+for i in range(0,len(A)):
+    if A[i]>=0:
+        B.append(A[i])  
+print(len(B))
+
+#5 Последний максимум
+def findmax(x,i,maxn,maxi):
+    #print(x,i,maxn)
+    if maxn < x:
+        maxn = x
+        maxi = i
+    return (maxn, maxi)
+
+A = list(map(int,input().split()))
+maxn = 0
+maxi = 0
+
+for i in range(0,len(A)):
+    maxn, maxi = findmax(A[i],i,maxn, maxi)
+print(maxn, maxi)
+
+#5 Больше предыдущего
+A = list(map(int,input().split()))
+B = []
+for i in range(1,len(A)):
+    if A[i]>A[i-1]:
+        B.append(A[i])
+print(' '.join(map(str,B)))
+
+#5 Возрастает ли список?
+A = list(map(int,input().split()))
+res='YES'
+for i in range(1,len(A)):
+    if A[i] <= A[i-1]:
+        res = 'NO'
+print(res)
+
+#5 Соседи одного знака
+A = list(map(int,input().split()))
+for i in range(1,len(A)):
+    if min(A[i],A[i-1])>0:
+        print(A[i-1],A[i])
+        break
+
+#5 Больше своих соседей
+A = list(map(int,input().split()))
+res = 0
+for i in range(1,len(A)-1):
+    if A[i] == max([A[i-1],A[i],A[i+1]]):
+        res = res + 1
+print(res)
+
+#5 Наибольший элемент
+A = list(map(int,input().split()))
+res = 0
+for i in range(1,len(A)-1):
+    if A[i] == max(A):
+        print(A[i],i)
         
-# print('red green        blue'.split())
-# result: ['red', 'green', 'blue']
+#5 Наименьший положительный
+A = list(map(int,input().split()))
+B = []
+for i in range(0,len(A)):
+    if A[i]>=0:
+        B.append(A[i])
+print(min(B))
 
-#print(list(map(len, ['red', 'green', 'blue'])))
-#result: [3, 5, 4]
+#5 Наименьший нечетный
+A = list(map(int,input().split()))
+B = []
+for i in range(0,len(A)):
+    if A[i]%2 != 0:
+        B.append(A[i])
+print(min(B))
 
-#numList = list(map(int, input().split()))
-#print(numList)
+#5 Вывести в обратном порядке
+A = list(map(int,input().split()))
+B = []
+for i in range(len(A)-1,-1,-1):
+    B.append(A[i])
+print(' '.join(map(str,B)))
 
-#print(', '.join(['Veni', 'Vidi', 'Vici']))
+#5 Переставить в обратном порядке
+A = list(map(int,input().split()))
+n = len(A)
+for i in range(0,int(n/2),1):
+    back = A[n-1-i]
+    A[n-1-i] = A[i]
+    A[i] = back
+print(' '.join(map(str,A)))
 
-#5_spisok
-
-s = input()
-s = s.split()
-print(s)
