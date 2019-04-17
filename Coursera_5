@@ -256,3 +256,74 @@ for i in range(0,int(n/2),1):
     A[i] = back
 print(' '.join(map(str,A)))
 
+#5 Удалить элемент
+A = list(map(int,input().split()))
+inp = int(input())
+for i in range(inp,len(A)-1):
+    A[i] = A[i+1]
+    i = i+1
+A.pop()
+print(' '.join(map(str,A)))
+
+#5 Вставить элемент
+A = list(map(int,input().split()))
+k = int(input())
+C = int(input())
+A.append(C)
+for i in range(len(A)-1,k,-1):
+    back = A[i-1]
+    A[i-1] = A[i]
+    A[i] = back
+print(A)
+
+#5 Ближайшее число
+A = list(map(int,input().split()))
+k = int(input())
+minl = 10000
+
+for i in range(len(A)):
+    if abs(A[i]-k) < minl:
+        minl = abs(A[i]-k)
+        res = A[i]
+print(res)
+
+#5 Шеренга
+A = list(map(int,input().split()))
+k = int(input())
+minl = 10000
+
+for i in range(len(A)):
+    if abs(A[i]-k) < minl:
+        minl = abs(A[i]-k)
+        mini = i+1
+A.insert(mini,k)
+print(' '.join(map(str,A)))
+
+#5 Количество различных элементов
+A = list(map(int,input().split()))
+res = 0
+for i in range(len(A)):
+    if A.count(i) != 0:
+        res = res + 1
+print(res)
+
+#5 Переставить соседние
+A = list(map(int,input().split()))
+for i in range(0,len(A)//2*2,2):
+    back = A[i]
+    A[i] = A[i+1]
+    A[i+1] = back
+print(' '.join(map(str,A)))
+
+#5 Цикличный сдвиг вправо
+A = list(map(int,input().split()))
+A.insert(0,A[len(A)-1])
+A.pop()
+print(*A)
+
+#5 Переставь местами max и min
+A = list(map(int,input().split()))
+mini = A.index(min(A)) 
+maxi = A.index(max(A))
+A[mini], A[maxi] = A[maxi], A[mini]
+print(A)
