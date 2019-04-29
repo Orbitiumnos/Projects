@@ -323,7 +323,131 @@ print(*A)
 
 #5 Переставь местами max и min
 A = list(map(int,input().split()))
+
 mini = A.index(min(A)) 
 maxi = A.index(max(A))
+
 A[mini], A[maxi] = A[maxi], A[mini]
 print(A)
+
+#5 Наибольшее произведение двух чисел
+A = list(map(int,input().split()))
+
+min1 = A.pop(A.index(min(A)))
+max1 = A.pop(A.index(max(A)))
+min2 = min(A)
+max2 = max(A)
+
+print(min1,min2,max2,max1)
+if min1*min2 > max1*max2:
+    print(min1, min2)
+else:
+    print(max2, max1)
+
+#5 Наибольшее произведение трех чисел
+A = list(map(int,input().split()))
+B = A.copy()
+
+max1 = A.pop(A.index(max(A)))
+max2 = A.pop(A.index(max(A)))
+max3 = A.pop(A.index(max(A)))
+
+min1 = B.pop(B.index(min(B)))
+min2 = B.pop(B.index(min(B)))
+min3 = B.pop(B.index(min(B)))
+
+maximum = max([min1*min2*max1,max1*max2*max3,min1*min2*min3])
+if min1*min2*max1 == maximum:
+    print(min1,min2,max1)
+elif max1*max2*max3 == maximum:
+    print(max1,max2,max3)
+elif min1*min2*min3 == maximum:
+    print(min1,min2,min3)
+else:
+    print('error')
+
+#5 Количество совпадающих пар
+def fac(n):
+    if n == 0:
+        return 1
+    return fac(n-1) * n
+
+A = list(map(int,input().split()))
+sum = 0
+l = []
+for i in range(len(A)):
+    n = A.count(A[i])
+    if n > 1:
+        if A[i] not in l:
+            sum = sum + (fac(n)/(fac(2)*fac(n-2)))
+    l.append(A[i])
+print(int(sum))
+
+#5 Уникальные элементы
+A = list(map(int,input().split()))
+l = []
+for i in range (len(A)):
+    if A[i] not in l:
+        l.append(A[i])
+print(' '.join(map(str,l)))
+
+#5 Кегельбан
+N, K = [int(x) for x in input().split()]
+A = []
+for i in range(N):
+    A.append('I')
+for i in range(K):
+    l, r = [int(x) for x in input().split()] #ОФИГЕННЫЙ СПОСОБ ВВОДИТЬ В INPUT ДВА ЭЛЕМЕНТА
+    for j in range(l-1,r):
+        A[j] = '.'
+print(''.join(map(str,A)))
+
+#5 Ферзи
+def ferz(fer):
+    l = []
+    for i in range(1, 8 + 1):
+        for j in range(1, 8 + 1):
+            if (i != fer[0] or j != fer[1]):
+                if (j == fer[1]):
+                    l.append([i, fer[1]])
+                if (i == fer[0]):
+                    l.append([fer[0], j])
+                if (i + j) == (fer[0] + fer[1]):
+                    l.append([i, j])
+                if (i - j) == (fer[0] - fer[1]):
+                    l.append([i, j])
+    l.append([fer[0], fer[1]])
+    return (l)
+
+res = []
+r = True
+for i in range(8):
+    fer = list(map(int, input().split()))
+    if fer in res:
+        r = False
+    res.extend(ferz(fer)) # добавляем 8 списков по параметрам заданным в input
+if r == False:
+    print('YES')
+else:
+    print('NO')
+
+#5 сжатие списка
+A = list(map(int,input().split()))
+i = 0
+for j in range(len(A)):
+    if A[i] == 0:
+        r = A.pop(i)
+        A.append(0)
+    else: i = i + 1
+print(' '.join(map(str,A)))
+
+#5 Самое частое число
+A = list(map(int,input().split()))
+A.sort
+maxl = 0
+maxn = 0
+for i in range(len(A)):
+  if A.count(A[i]) > maxl:
+    maxl = A.count(A[i])
+    maxn = A[i]
+print(maxn)
