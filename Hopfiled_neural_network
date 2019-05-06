@@ -1,11 +1,5 @@
 import numpy as np
-
-n = int(input())
-data = []
-for i in range(n):
-    inp = list(map(int, input().split()))
-    data.append(inp)
-data
+import random
 
 def weight_m (data):
     w1 = np.zeros([len(data), len(data)])
@@ -25,24 +19,46 @@ def validation(res, data):
             return False
         return True
     
-def validate(test, data):
-    w = weight_m(data)
-    res = []
-    for i in range(len(w)):
-        net = 0
-        for j in range(len(w[1])):
-            net = net + test[j] * w[i,j]
-        if net > 0:
-            net = 1
+def weight_all(data):
+    num_files = 0
+    for z in range(len(data)):
+        if num_files == 0:
+            w = weight_m(data[z])
+            num_files = 1
         else:
-            net = -1
-        res.append(net)
-        
-    if validation(res, data) == True:
-        print('yes',res, data)
-    else:
-        print('no',res, data)
-        
+            tmp_w = weight_m(data[z])
+            w = w + tmp_w
+            num_files = num_files + 1
+    return(w)
+
+def update(w,y_vec,theta=0.5,time=100):
+    for s in range(time):
+        i = random.randint(0,len(y_vec)-1)
+        u = np.dot(w[i][:],y_vec) - theta
+
+        if u > 0:
+            y_vec[i] = 1
+        elif u < 0:
+            y_vec[i] = -1
+    return y_vec
+    
+def validate(test, data):
+    
+    w = weight_all(data)
+    res = update(w,test,theta=0.5, time=1000)
+    
+    for l in range(len(data)):
+        if validation(res,data[l]) == True:
+            print('yes',np.array(res).reshape((4,4)), sep='\n', end='\n')
+        else:
+            print('no',np.array(res).reshape((4,4)), sep='\n', end='\n')
+
+n = int(input())
+data = []
+for i in range(n):
+    inp = list(map(int, input().split()))
+    data.append(inp)
+
 test = list(map(int,input().split()))
-for k in range(len(data)):
-    validate(test, data[k])
+#for k in range(len(data)):
+validate(test, data)
