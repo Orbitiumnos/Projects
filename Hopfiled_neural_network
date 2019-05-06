@@ -1,39 +1,48 @@
 import numpy as np
 
-len = int(input())
-x_new = np.zeros([len,len])
-print(x_new)
+n = int(input())
+data = []
+for i in range(n):
+    inp = list(map(int, input().split()))
+    data.append(inp)
+data
 
-data = list(map(int,input().split()))
-c = 0
-for i in range (x_new.shape[0]):
-    for j in range (x_new.shape[1]):
-        x_new[i][j] = data[c]
-        c = c+1
-print(x_new)
-
-m = x_new.shape[0]*x_new.shape[1]
-x_vec = np.zeros(m)
-
-c = 0
-for i in range (x_new.shape[0]):
-    for j in range (x_new.shape[1]):
-        x_vec[c] = x_new[i][j]
-        c = c+1
-print(x_vec)
-
-x_vec.shape[0]
-
-if len(x_vec.shape[0]) != 1:
-        print ("The input is not vector")
-else:
-    w = np.zeros([len(x_vec),len(x_vec)])
-        
-    for i in range(len(x_vec)):
-        for j in range(i,len(x_vec)):
+def weight_m (data):
+    w1 = np.zeros([len(data), len(data)])
+    for i in range(len(data)):
+        for j in range(i, len(data)):
             if i == j:
-                w[i,j] = 0
+                w1[i, j] = 0
             else:
-                w[i,j] = x_vec[i]*x_vec[j]
-                w[j,i] = w[i,j]
-print(w)
+                w1[i, j] = data[i] * data[j]
+                w1[j, i] = w1[i, j]
+    #print(w1)
+    return w1
+
+def validation(res, data):
+    for i in range(len(res)):
+        if res[i] != data[i]:
+            return False
+        return True
+    
+def validate(test, data):
+    w = weight_m(data)
+    res = []
+    for i in range(len(w)):
+        net = 0
+        for j in range(len(w[1])):
+            net = net + test[j] * w[i,j]
+        if net > 0:
+            net = 1
+        else:
+            net = -1
+        res.append(net)
+        
+    if validation(res, data) == True:
+        print('yes',res, data)
+    else:
+        print('no',res, data)
+        
+test = list(map(int,input().split()))
+for k in range(len(data)):
+    validate(test, data[k])
