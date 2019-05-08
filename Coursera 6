@@ -1,0 +1,62 @@
+#6 Слияние списков
+
+def merge(a, b):
+    c = []
+    i, j = 0, 0
+    while i < len(a) and j < len(b):
+        if a[i] <= b[j]:
+            c.append(a[i])
+            i = i + 1
+        else:
+            c.append(b[j])
+            j = j + 1
+    c = c + a[i:]
+    c = c + b[j:]
+    return c
+
+a = list(map(int,input().split()))
+b = list(map(int,input().split()))
+print(merge(a,b))
+
+#6 Пересечение множеств
+
+def intersection(a,b):
+    res = []
+    i,j = 0,0
+    while i < len(a) and j < len(b):
+        print(a[i],b[j])
+        if a[i] < b[j]:
+            i = i+1
+        elif a[i] > b[j]:
+            j = j+1
+        else:
+            res.append(a[i])
+            i = i+1
+    return res
+
+a = list(map(int,input().split()))
+b = list(map(int,input().split()))
+print(intersection(a,b))
+
+#6 Сортировка
+
+n = int(input())
+l = list(map(int,input().split()))
+if len(l) != 0:
+    l.sort()
+    print(*l)
+
+#6 Обувной магазин
+n = int(input())
+l = list(map(int,input().split()))
+
+res = 0
+for i in range(len(l)):
+    if l[i] > n:
+        if res == 0:
+            pr = min(l)
+            res = res + 1
+        elif (l[i] - pr) > 3:
+            pr = l[i]
+            res = res + 1
+print(res)
