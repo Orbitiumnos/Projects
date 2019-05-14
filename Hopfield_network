@@ -1,5 +1,7 @@
 import numpy as np
 import random
+import re
+import os
 
 def weight_m (data):
     w1 = np.zeros([len(data), len(data)])
@@ -31,34 +33,68 @@ def weight_all(data):
             num_files = num_files + 1
     return(w)
 
-def update(w,y_vec,theta=0.5,time=100):
-    for s in range(time):
-        i = random.randint(0,len(y_vec)-1)
-        u = np.dot(w[i][:],y_vec) - theta
+def func(x):
+    if x < 0:
+        return -1
+    elif x > 0:
+        return 1
+    else:
+        return 0
 
-        if u > 0:
-            y_vec[i] = 1
-        elif u < 0:
-            y_vec[i] = -1
+def update(w,y_vec):
+    
+    s = []
+    
+    for i in range(len(w)):
+        #i = random.randint(0,len(y_vec)-1)
+        #u = np.dot(w[i][:],y_vec) - theta
+        sum_s = 0
+        for j in range(len(y_vec)):
+            sum_s = sum_s + w[i][j]*y_vec[j]
+        s.append(sum_s)
+        
+    y_vec.clear()
+        
+    for i in range(len(s)):
+        y_vec.append(func(s[i]))
+        
     return y_vec
     
 def validate(test, data):
     
     w = weight_all(data)
-    res = update(w,test,theta=0.5, time=1000)
     
-    for l in range(len(data)):
-        if validation(res,data[l]) == True:
-            print('yes',np.array(res).reshape((4,4)), sep='\n', end='\n')
-        else:
-            print('no',np.array(res).reshape((4,4)), sep='\n', end='\n')
+    for i in range(10):
+        test = update(w,test)
+    return test
 
-n = int(input())
-data = []
-for i in range(n):
-    inp = list(map(int, input().split()))
-    data.append(inp)
+train = []
 
-test = list(map(int,input().split()))
-#for k in range(len(data)):
-validate(test, data)
+file = open('train_samples.txt','r')
+text = file.read()
+file.close()
+
+text = text.splitlines()
+
+for i in range(len(text)):
+    train.append(list(map(int,text[i].split())))
+
+data = train.copy()
+
+file = open("test_samples.txt","r") 
+test = file.read()
+file.close()
+test = list(map(int,test.split()))
+
+res = validate(test, data)
+
+arr = np.asarray(res).reshape(8,8)
+print(arr)
+
+file = open("result_hop.txt",'w')
+
+for i in range(len(arr)):
+    str_to_write = ' '.join(map(str, arr[i]))
+    file.write(str_to_write.replace('-1','0'))
+
+file.close()
