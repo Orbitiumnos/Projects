@@ -17,14 +17,22 @@ def summing(i,m,y2):
 
 def subtract_vectors(v, w):
     return [vi - wi for vi, wi in zip(v, w)]
-    
-m = int(input())
-data = []
-for i in range(m):
-    inp = list(map(int, input().split()))
-    data.append(inp)
+
+train = []
+
+file = open('train_samples.txt','r')
+text = file.read()
+file.close()
+
+text = text.splitlines()
+
+for i in range(len(text)):
+    train.append(list(map(int,text[i].split())))
+
+data = train.copy()
 
 n = len(data[0])
+m = len(data)
 
 w = []
 for i in range(m):
@@ -44,26 +52,29 @@ for i in range(m):
             u[i,j] = 1
         else:
             u[i,j] = -1*e
+            
+#print(e)
+#print(t)
+#print(u)
 
-print(e)
-print(t)
-print(u)
-
-x = list(map(int,input().split()))
+file = open("test_samples.txt","r") 
+test = file.read()
+file.close()
+x = list(map(int,test.split()))
 
 s1 = []
 for i in range(m):
     sumx = 0
     for j in range(n):
         sumx = sumx + x[j]*w[i][j]
-    #print(sumx + t)
     sumx = sumx + t
     s1.append(sumx)
 print(s1)
 
 y2 = []
 for i in range(m):
-    y2.append(func(s1[i],t))
+    #y2.append(func(s1[i],t))
+    y2.append(s1[i])
 print(y2)
 
 for z in range(10):
@@ -80,36 +91,17 @@ for z in range(10):
     y2 = []
     for i in range(m):
         y2.append(func(s2[i],t))
+        
+    razn = sum(subtract_vectors(y2,y2_prev))
     
-    print(z,y2_prev,y2,sum(subtract_vectors(y2,y2_prev)),end = '\n')
-    if abs(sum(subtract_vectors(y2,y2_prev))) < emax:
+    print(z,["{:.2f}".format(value) for value in y2_prev],["{:.2f}".format(value) for value in y2],"{:.2f}".format(razn),end = '\n')
+    
+    if abs(((razn)**2)**(1/2)) < emax:
         break
-    
-'''
-1 -1  1 -1  1 -1  1 -1  1
--1 1 -1  1  1  1 -1  1 -1
-1  1  1  1 -1  1  1  1  1
 
-1 -1 -1 -1 1 -1 1 -1 1
+y2 = ["{:.2f}".format(value) for value in y2_prev]
+print(y2)
 
-N = 16 (размерность каждого образа) входных синапса и размерность входных векторов
-M = 4 (число образов) нейрона
-
-Веса первого слоя
-Матрица 16*4 (n*m)
-Делим каждый ее элемент на два
-Порог каждого образа равен = n/2 
-
-Веса второго слоя
-0 < рандомно < 1/число образов
-
-Алгоритм
-Подаем X размерностью n
-Считаем, s образа = сумма (x*вес) + T
-
-аксон второго слоя (y) = S
-
-затем y = y - вес второго * сумма всех y кроме указанного
-
-https://neuronus.com/theory/nn/965-nejronnye-seti-khemminga.html#sel=214:1,214:2
-'''
+file = open("result_hem.txt",'w')
+file.write(' '.join(map(str, y2)))
+file.close()
