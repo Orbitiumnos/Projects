@@ -1,0 +1,107 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+data = pd.read_excel(r"C:\Users\Николай\Desktop\Питон_нейронка\Data_for_neural_network_2.xlsx",index_col = 0)
+data.head(20)
+
+#Деление на обучающую и тестовую выборку
+train = data [data['Class'].notna()]
+train.head()
+test = data [data['Class'].isna()]
+test.head()
+k = train['Class'].nunique()
+k
+
+#Формирование желаемых векторов
+y = train['Class'].values.reshape (-1,1).astype('int')
+d_all = np.zeros((y.shape[0],k))
+for i in range (len(y)):
+    d_all[i][y[i]-1] = 1
+d_all
+
+train = train.drop (columns = ['Class'])
+train.head()
+
+#Стандартизация обучающей выборки
+mean_train = train.mean()
+std_train = train.std()
+train = (train - mean_train)/std_train
+train
+
+#Определение числа скрытых слоев и инициализация весов
+hidden = 9
+w1 = np.random.rand(hidden,train.shape[1])
+w1
+
+w2 = np.random.rand (k,hidden)
+w2
+
+#Обучение
+epoch = 50
+mse = 0
+d = {}
+for i in range (epoch):
+    for j in range (train.shape[0]) :
+        x = train.values[j].reshape (train.shape[1],1)
+        s1 = w1@x
+        sigm_s1 = 1/(1+np.exp(-s1))
+        s2 = w2@sigm_s1
+        sigm_s2 = 1/(1+np.exp(-s2))
+        mse += np.sum ((sigm_s2-d_all[j].reshape(-1,1))**2)/2
+        delta_2 = (sigm_s2-d_all[j].reshape(-1,1))*(sigm_s2*(1-sigm_s2)) 
+        delta_1 = w2.T@delta_2
+        w2 -= 0.1 * delta_2@sigm_s1.T
+        w1 -= 0.1 * delta_1@x.T
+    d[i] = mse
+    mse = 0
+
+#График ошибки сети
+plt.figure(figsize = (6,6))
+plt.title ('MSE(epoch)')
+plt.xlabel('epoch')
+plt.ylabel('MSE')
+plt.plot(d.keys(),d.values())
+Итоговые матрицы весов
+w1
+w2
+### загрузка и стандартизация тестовой выборки
+
+data_test = pd.read_excel(r"C:\Users\Николай\Desktop\Питон_нейронка\Data_for_neural_network_2.xlsx",index_col = 0)
+
+test = data_test[data_test['Class'].isnull()]
+test = test.drop (columns = ['Class'])
+
+#test = pd.read_excel('test.xlsx',index_col = 0)
+test
+test = (test - mean_train) / std_train
+test
+
+#Предсказание
+d_train = {}
+for j in range (train.shape[0]) :
+        x = train.values[j].reshape (train.shape[1],1)
+        s1 = w1@x
+        sigm_s1 = 1/(1+np.exp(-s1))
+        s2 = w2@sigm_s1
+        sigm_s2 = 1/(1+np.exp(-s2))
+        d_train[train.index[j]] = np.argmax(sigm_s2)+1
+
+d_test ={}
+for j in range (test.shape[0]) :
+        x = test.values[j].reshape (train.shape[1],1)
+        s1 = w1@x
+        sigm_s1 = 1/(1+np.exp(-s1))
+        s2 = w2@sigm_s1
+        sigm_s2 = 1/(1+np.exp(-s2))
+        d_test[test.index[j]] = np.argmax(sigm_s2)+1
+
+df_train = pd.DataFrame.from_dict(data = d_train, orient = 'index',columns = ['Класс'])
+df_train
+
+df_test = pd.DataFrame.from_dict(data = d_test, orient = 'index',columns = ['Класс'])
+df_test
+
+#Выгрузка в эксель
+df_train.to_excel('train_res.xlsx')
+df_test.to_excel('test_res.xlsx')
