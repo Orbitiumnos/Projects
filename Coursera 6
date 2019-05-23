@@ -60,3 +60,34 @@ for i in range(len(l)):
             pr = l[i]
             res = res + 1
 print(res)
+
+#6 Создание архива
+s, n = [int(x) for x in input().split()]
+p = []
+for i in range(n):
+    p.append(int(input()))
+
+res = 0
+for i in range(len(p)):
+    #minx = min(p[i:len(p)])
+    #minx = p.pop(p.index(min(p)))
+    minx = p[i]
+    if res + minx > s:
+        break
+    res = res + minx
+print(res)
+
+
+# *** *** *** ***
+
+n = int(input())
+peopleList = []
+for i in range(n):
+    tempManData = input().split()
+    manData = (int(tempManData[0]), tempManData[1])
+    peopleList.append(manData)
+peopleList.sort()
+for manData in peopleList:
+    print(' '.join(map(str, manData)))
+
+# *** *** *** ***
