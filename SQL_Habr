@@ -50,3 +50,5 @@ FROM periods
 WHERE 1=1
 --GROUP BY 
 WITH UR;
+
+-- https://habr.com/ru/company/postgrespro/blog/448368/
