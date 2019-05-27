@@ -1,3 +1,6 @@
+-- АНАЛИТИЧЕСКИЙ SQL
+-- https://www.sql.ru/blogs/oracleandsql/1926
+
 CREATE TABLE TEST_TABLE (
     id integer,
     value integer,
