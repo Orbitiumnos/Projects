@@ -146,3 +146,26 @@ resh = sorted(resh, key=getkey)
 for i in range(len(resh)):
     rslt2.append(rslt[(resh[i][0])]+1)
 print(' '.join(map(str,rslt2)))
+
+#6 Средний балл по классам
+
+def avg(list):
+    if len(list) != 0:
+        return sum(list)/len(list)
+    else:
+        return 0
+
+res9 = []
+res10 = []
+res11 = []
+with open(r'C:\Users\rb066152\Documents\Work_Data\students.txt') as f:
+    for line in f:
+        l = list(map(int,list(line.split())[2:4]))
+        print(l)
+        if l[0] == 9:
+            res9.append(l[1])
+        elif l[0] == 10:
+            res10.append(l[1])
+        else:
+            res11.append(l[1])
+print(avg(res9), avg(res10), avg(res11))
