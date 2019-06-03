@@ -77,7 +77,6 @@ for i in range(len(p)):
     res = res + minx
 print(res)
 
-
 # *** *** *** ***
 
 n = int(input())
@@ -91,3 +90,59 @@ for manData in peopleList:
     print(' '.join(map(str, manData)))
 
 # *** *** *** ***
+
+#6 гражданская оборона
+
+def create_tuple (list, list_sort):
+    res = []
+    for i in range(len(list)):
+        res.append((list_sort.index(list_sort[i]), list.index(list_sort[i])))
+        #resb.append(list.index(list_sort[i]))
+    return(res)
+
+def choice(n1,n2,x):
+    s1 = abs(n1-x)
+    s2 = abs(n2-x)
+    if s1 <= s2:
+        return n1
+    else:
+        return n2
+
+def getkey(item):
+    return item[1]
+
+n = int(input())
+home = list(map(int,input().split()))
+t1 = home.copy()
+t1.sort()
+resh = create_tuple(home, t1)
+#print(resh)
+
+m = int(input())
+bunk = list(map(int,input().split()))
+t2 = bunk.copy()
+t2.sort()
+resb = create_tuple(bunk, t2)
+#print(resb)
+
+rslt = []
+rslt2 = []
+j = 1
+
+for i in range(len(t1)):
+    if t1[i] > t2[j]:
+        while t1[i] > t2[j]:
+            if j == len(t2) - 1:
+                break
+            j = j + 1
+    #print(t2[j - 1], t2[j], t1[i])
+    k = choice(t2[j - 1], t2[j], t1[i])
+    ind = t2.index(k)
+    rslt.append(resb[ind][1])
+#print(rslt)
+
+resh = sorted(resh, key=getkey)
+
+for i in range(len(resh)):
+    rslt2.append(rslt[(resh[i][0])]+1)
+print(' '.join(map(str,rslt2)))
