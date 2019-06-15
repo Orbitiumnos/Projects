@@ -1,1 +1,452 @@
+#3_triangle
+n = 0
+a = int(input())
+b = int(input())
+c = int(input())
+p = (a+b+c)/2
+s = (p*(p-a)*(p-b)*(p-c))**(1/2)
+print('{0:.6f}'.format(s))
 
+#3_sum
+i = 1
+r = 0
+n = int(input())
+while i <= n:
+  r = (1/(i**2))+r
+  print('i:',i,'r:',r)
+  i = i + 1
+print('{0:.5f}'.format(r))
+
+#3_drob
+x = float(input())
+r = x - int(x)
+print('{0:.3f}'.format(r))
+
+#3_price
+i = float(input())
+rub = int(i)
+cop = int((i - int(i))*100)
+print(rub, cop)
+
+#3_rus_stand
+import math
+i = float(input())
+if i-int(i) < 0.5:
+  res = math.floor(i)
+else:
+  res = math.ceil(i)
+print(res)
+
+#3_percent
+r = int(input())
+x = int(input())
+y = int(input())
+x = x + y/100
+x = (x * (1+r/100))
+print(x)
+rub = int(x)
+cop = round((x - int(x))*100)
+print(rub, cop)
+
+#3_percent_2
+i = 0
+r = int(input())
+x = int(input())
+y = int(input())
+k = int(input())
+while i < k: 
+  x = x+y/100
+  x = x*(1+r/100)
+  i = i + 1
+  rub = int(x)
+  cop = round((x - int(x))*100)
+  #print('year:',i,rub, cop)
+print(rub, cop)
+
+#3_horner
+n = int(input())
+x = float(input())
+horn = 0
+while n!=-1:
+  a = int(input())
+  sum = a*(x**(n)) 
+  n = n-1
+  horn = horn + sum
+  print("horn: {0}*{1}^{2}".format(a,x,n+1))
+print("res:",'{0:.1f}'.format(horn))
+
+#3_stdn   
+n = 0
+s = 0
+sum = 0
+sum_kv = 0
+i = 1
+while i != 0:
+  i = int(input())
+  if i == 0:
+    continue
+  sum = sum + i
+  sum_kv = sum_kv + i ** 2
+  n = n + 1
+  s = sum/n
+  print('sum:',sum,'sum_kv:',sum_kv,'sred_kv:',s,'n:',n)
+print('res:', ((sum_kv-((sum**2)/n))/(n-1))**(1/2))
+
+#3_stdn   
+n = 0
+s = 0
+sum = 0
+sum_kv = 0
+i = 1
+while i != 0:
+  i = int(input())
+  if i == 0:
+    continue
+  sum = sum + i
+  sum_kv = sum_kv + i ** 2
+  n = n + 1
+  s = sum/n
+  print('sum:',sum,'sum_kv:',sum_kv,'sred_kv:',s,'n:',n)
+print('res:', ((sum_kv-((sum**2)/n))/(n-1))**(1/2))
+
+#3_kv_urav
+a = float(input())
+b = float(input())
+c = float(input())
+d = b**2-4*a*c
+if d > 0:
+  x1 = ((-1)*b+d**(0.5))/2*a
+  x2 = ((-1)*b-d**(0.5))/2*a
+  print('{0:.6f}'.format(x2),'{0:.6f}'.format(x1))
+elif d == 0:
+  x = (-1*b)/2*a
+  print('{0:.6f}'.format(x))
+else:
+  print('net reshenia')
+
+#3_kv_urav_2
+a = float(input())
+b = float(input())
+c = float(input())
+if a == 0:
+  if b == 0:
+    if c == 0:
+      print('3')
+    else:
+      print('0')
+  else:
+    if c == 0:
+      x = 0
+      print('1',x)
+    else:
+      x = -c/b
+      print('1',x)
+else:
+  d = (b**2)-(4*a*c)
+  if d > 0:
+    x1 = ((-1)*b+d**(0.5))/(2*a)
+    x2 = ((-1)*b-d**(0.5))/(2*a)
+    print('2','{0:.6f}'.format(x2),'{0:.6f}'.format(x1))
+  elif d == 0:
+    x = (-1)*b/(2*a)
+    print('1','{0:.6f}'.format(x))
+  else:
+    print('0')
+
+#3_lin_urav
+A = int(input('A:'))
+B = int(input('B:'))
+C = int(input('C:'))
+D = int(input('D:'))
+E = int(input('E:'))
+F = int(input('F:'))
+x = (E*D-F*B)/(A*D-C*B)
+y = (E*A-F*C)/(A*D-C*B)
+print(x,y)
+
+#3_lin_urav
+A = int(input('A:'))
+B = int(input('B:'))
+C = int(input('C:'))
+D = int(input('D:'))
+E = int(input('E:'))
+F = int(input('F:'))
+
+if A==0==C and B!=0 and D!=0: #4
+  y = E/B
+  print('4',y)
+elif B==0==D and A!=0 and C!=0: #3
+  x = E/A
+  print('3',x)
+elif B==0==D==A==C: #5
+  print('5')
+elif A//C==B//D==E//F and A%C==B%D==E%F: #1
+  p = E/B
+  q = -A/B
+  print('1',p,q)
+else: # 0 2
+  x = (E*D-F*B)/(A*D-C*B)
+  y = (E*A-F*C)/(A*D-C*B)
+  print('2',x,y)
+#print("Urav: {0}*{3} + {1}*{4} = {2}".format(A,B,E,x,y))
+#print("Urav: {0}*{3} + {1}*{4} = {2}".format(C,D,F,x,y))
+
+#3_srez
+string = input()
+print(string[2])
+print(string[-2])
+print(string[0:6])
+print(string[:-2])
+print(string[0::2])
+print(string[1::2])
+print(string[-1::-1])
+print(string[-1::-2])
+print(len(string))
+
+#3_perv_i_posl
+string = input()
+pos1 = string.find('f')
+pos2 = len(string)-string[-1::-1].find('f')-1
+if pos1 == pos2:
+  print(pos1)
+elif pos1 == -1:
+  print()
+else:
+  print(pos1, pos2)
+
+#3_udalenie_frag
+string = input()
+pos1 = string.find('h')
+pos2 = len(string)-string[-1::-1].find('h')-1
+string2 = string[:pos1]+string[pos2+1:]
+print(string2)
+
+
+
+#3_povt_frag
+string = input()
+pos1 = string.find('h')
+pos2 = len(string)-string[-1::-1].find('h')-1
+#print(pos1,pos2)
+if pos1 == pos2:
+  print(string[pos1+1:]*2)
+elif pos1 == -1:
+  print()
+else:
+  print(string[pos1+1:pos2]*2)
+
+#3_vtoroe_vhojd
+string = input()
+pos1 = string.find('f')
+string2 = string[pos1+1:]
+pos11 = string2.find('f')+1+pos1
+if string.find('f')==-1:
+  print('-2')
+elif string2.find('f')==-1:
+  print('-1')
+else:
+  print(pos11)
+
+#3_vtoroe_vhojd
+string = input()
+pos = string.find(' ')
+string2 = string[pos+1:]+string[pos]+string[:pos]
+print(string2)
+
+#3_stdn   
+#n = 0
+#s = 0
+#sum = 0
+#sum_kv = 0
+#i = 1
+#while i != 0:
+#  i = int(input())
+#  if i == 0:
+#    continue
+#  sum = sum + i
+#  sum_kv = sum_kv + i ** 2
+#  n = n + 1
+#  s = sum/n
+#  print('sum:',sum,'sum_kv:',sum_kv,'sred_kv:',s,'n:',n)
+#print('res:', ((sum_kv-((sum**2)/n))/(n-1))**(1/2))
+
+#3_kv_urav
+#a = float(input())
+#b = float(input())
+#c = float(input())
+#d = b**2-4*a*c
+#if d > 0:
+#  x1 = ((-1)*b+d**(0.5))/2*a
+#  x2 = ((-1)*b-d**(0.5))/2*a
+#  print('{0:.6f}'.format(x2),'{0:.6f}'.format(x1))
+#elif d == 0:
+#  x = (-1*b)/2*a
+#  print('{0:.6f}'.format(x))
+#else:
+#  print('net reshenia')
+
+#3_kv_urav_2
+a = float(input())
+b = float(input())
+c = float(input())
+if a == 0:
+  if b == 0:
+    if c == 0:
+      print('3')
+    else:
+      print('0')
+  else:
+    if c == 0:
+      x = 0
+      print('1',x)
+    else:
+      x = -c/b
+      print('1',x)
+else:
+  d = (b**2)-(4*a*c)
+  if d > 0:
+    x1 = ((-1)*b+d**(0.5))/(2*a)
+    x2 = ((-1)*b-d**(0.5))/(2*a)
+    print('2','{0:.6f}'.format(x2),'{0:.6f}'.format(x1))
+  elif d == 0:
+    x = (-1)*b/(2*a)
+    print('1','{0:.6f}'.format(x))
+  else:
+    print('0')
+
+#3_lin_urav
+A = int(input('A:'))
+B = int(input('B:'))
+C = int(input('C:'))
+D = int(input('D:'))
+E = int(input('E:'))
+F = int(input('F:'))
+x = (E*D-F*B)/(A*D-C*B)
+y = (E*A-F*C)/(A*D-C*B)
+print(x,y)
+
+#3_lin_urav
+A = int(input('A:'))
+B = int(input('B:'))
+C = int(input('C:'))
+D = int(input('D:'))
+E = int(input('E:'))
+F = int(input('F:'))
+
+if A==0==C and B!=0 and D!=0: #4
+  y = E/B
+  print('4',y)
+elif B==0==D and A!=0 and C!=0: #3
+  x = E/A
+  print('3',x)
+elif B==0==D==A==C: #5
+  print('5')
+elif A//C==B//D==E//F and A%C==B%D==E%F: #1
+  p = E/B
+  q = -A/B
+  print('1',p,q)
+else: # 0 2
+  x = (E*D-F*B)/(A*D-C*B)
+  y = (E*A-F*C)/(A*D-C*B)
+  print('2',x,y)
+#print("Urav: {0}*{3} + {1}*{4} = {2}".format(A,B,E,x,y))
+#print("Urav: {0}*{3} + {1}*{4} = {2}".format(C,D,F,x,y))
+
+#3_srez
+string = input()
+print(string[2])
+print(string[-2])
+print(string[0:6])
+print(string[:-2])
+print(string[0::2])
+print(string[1::2])
+print(string[-1::-1])
+print(string[-1::-2])
+print(len(string))
+
+#3_perv_i_posl
+string = input()
+pos1 = string.find('f')
+pos2 = len(string)-string[-1::-1].find('f')-1
+if pos1 == pos2:
+  print(pos1)
+elif pos1 == -1:
+  print()
+else:
+  print(pos1, pos2)
+
+#3_udalenie_frag
+string = input()
+pos1 = string.find('h')
+pos2 = len(string)-string[-1::-1].find('h')-1
+string2 = string[:pos1]+string[pos2+1:]
+print(string2)
+
+
+
+#3_povt_frag
+string = input()
+pos1 = string.find('h')
+pos2 = len(string)-string[-1::-1].find('h')-1
+#print(pos1,pos2)
+if pos1 == pos2:
+  print(string[pos1+1:]*2)
+elif pos1 == -1:
+  print()
+else:
+  print(string[pos1+1:pos2]*2)
+
+#3_vtoroe_vhojd
+string = input()
+pos1 = string.find('f')
+string2 = string[pos1+1:]
+pos11 = string2.find('f')+1+pos1
+if string.find('f')==-1:
+  print('-2')
+elif string2.find('f')==-1:
+  print('-1')
+else:
+  print(pos11)
+
+
+
+#3_vtoroe_vhojd
+string = input()
+pos = string.find(' ')
+string2 = string[pos+1:]+string[pos]+string[:pos]
+print(string2)
+
+#3_collichestvo_slov
+string = input()
+col = string.count(' ') + 1
+print(col)
+
+#3_zamena_podstroki
+string = input()
+string2 = string.replace('1','one')
+print(string2)
+
+#3_udalenie_simvola
+string = input()
+string2 = string.replace('@','')
+print(string2)
+
+#3_zamena_vnutry
+string = input()
+pos1 = string.find('h')
+pos2 = len(string) - string[-1::-1].find('h') - 1
+string2 = string[pos1+1:pos2]
+string3 = string[:pos1+1]+string2.replace('h','H')+string[pos2:]
+print(string3)
+
+#3_vstavka_simvolov
+string = input()
+print(string[0]+string[1:-1].replace('','*')+string[-1])
+
+#3_zamena_tret_symb
+string = input()
+i = 0
+while i < len(string):
+  string = string.replace(string[i],'',1)
+  i = i + 2
+print(string)
