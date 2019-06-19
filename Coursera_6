@@ -158,7 +158,7 @@ def avg(list):
 res9 = []
 res10 = []
 res11 = []
-with open(r'C:\Users\rb066152\Documents\Work_Data\students.txt') as f:
+with open(r'C:\Users\rb066152\Documents\Work_Data\students.txt','r') as f:
     for line in f:
         l = list(map(int,list(line.split())[2:4]))
         print(l)
@@ -169,3 +169,57 @@ with open(r'C:\Users\rb066152\Documents\Work_Data\students.txt') as f:
         else:
             res11.append(l[1])
 print(avg(res9), avg(res10), avg(res11))
+
+#6 Отсортировать список участников по алфавиту
+
+def create(file):
+    res = []
+    with open(file, 'r') as f:
+        for line in f:
+            #l = list(map(str, line.split()))
+            #l = [l[i] for i in [0, 1, 3]]
+            l = [list(map(str, line.split()))[i] for i in [0, 1, 3]]
+            res.append(tuple(l))
+    return res
+
+def getkey(note):
+    return note[0]
+
+def Sort(tup):
+    tup.sort(key=lambda x: str(x[0]))
+    for i in range(len(tup)):
+        print(tup[i])
+
+res = []
+file = r'C:\Users\rb066152\Documents\Work_Data\students2.txt'
+res = create(file)
+Sort(res)
+
+#6 Сортировка подсчетом
+
+def CountSort(n):
+    k = [0] * 101
+
+    for i in n:
+        k[i] = k[i] + 1
+
+    n.clear()
+    j = 0
+    for i in k:
+        n = n + [j] * i
+        j = j + 1
+
+def create(file):
+    res = []
+    with open(file, 'r') as f:
+        for line in f:
+            res = list(map(str, line.split()))
+    return res
+
+res = []
+file = r'C:\Users\rb066152\Documents\Work_Data\students2.txt'
+n = create(file)
+
+n = list(map(int,input().split()))
+res = CountSort(n)
+print(' '.join(map(str,res)))
