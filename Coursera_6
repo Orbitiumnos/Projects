@@ -149,6 +149,20 @@ print(' '.join(map(str,rslt2)))
 
 #6 Средний балл по классам
 
+'''
+#верное решение
+inFile = open('int.txt', 'r', encoding='utf8')
+outFile = open('out.txt', 'w', encoding='utf8')
+newlist = inFile.readlines()
+listoflist = list(map(str.split, newlist))
+listoflist.sort(key=lambda x: x[0])
+tmp = ''
+for surname, name, school, mark in listoflist:
+    tmp += ' '.join((surname, name, mark)) + '\n'
+print(tmp[:-1], end='', file=outFile)
+outFile.close()
+'''
+
 def avg(list):
     if len(list) != 0:
         return sum(list)/len(list)
