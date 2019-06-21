@@ -223,3 +223,44 @@ n = create(file)
 n = list(map(int,input().split()))
 res = CountSort(n)
 print(' '.join(map(str,res)))
+
+#6 Клавиатура
+
+'''
+Тест 1
+Входные данные:
+5
+1 50 3 4 3
+16
+1 2 3 4 5 1 3 3 4 5 5 5 5 5 4 5
+
+Вывод программы:
+YES
+NO
+NO
+NO
+YES
+'''
+
+def form_lst(n, naj):
+    lst = [0] * n
+    for i in naj:
+        lst[i - 1] = lst[i - 1] + 1
+    return lst
+
+def srav(lst, pr):
+    for i in range(len(pr)):
+        if lst[i] > pr[i]:
+            print('YES')
+        else:
+            print('NO')
+
+n = int(input())
+pr = list(map(int, input().split()))
+k = int(input())
+naj = list(map(int, input().split()))
+
+lst = form_lst(n, naj)
+srav(lst, pr)
+
+#6 Максимальный балл по классам
