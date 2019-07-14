@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type='text/xsl' href='test_xsl_1.xsl'?>
+<objects type="array">
+  <object>
+    <id type="integer">307</id>
+    <name>Технологии разделения изотопов и ядерное топливо</name>
+    <code>14.05.03</code>
+    <level>Специалитет</level>
+    <level-id type="integer">1</level-id>
+    <generation>ФГОС3+</generation>
+    <generation-id type="integer">1</generation-id>
+    <type>специальность</type>
+    <type-id type="integer">1</type-id>
+  </object>
+  <object>
+    <id type="integer">308</id>
+    <name>Ядерные физика и технологии</name>
+    <code>14.04.02</code>
+    <level>Магистратура</level>
+    <level-id type="integer">2</level-id>
+    <generation>ФГОС3+</generation>
+    <generation-id type="integer">1</generation-id>
+    <type>направление</type>
+    <type-id type="integer">0</type-id>
+  </object>
+</objects>
