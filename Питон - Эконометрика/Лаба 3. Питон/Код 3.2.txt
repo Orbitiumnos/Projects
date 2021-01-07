@@ -1,0 +1,111 @@
+import xlrd,xlwt
+import numpy as np
+
+data = xlrd.open_workbook('C:/Program1/Sample/Info3.xlsx')
+sheet = data.sheet_by_index(0) 
+vals = [sheet.row_values(rownum) for rownum in range(sheet.nrows)] 
+vals = np.array(vals) 
+Y = np.copy(vals[:,:1]) 
+X = np.copy(vals[:,1:]) 
+X = np.hstack([np.ones((X.shape[0], 1)), X]) 
+n=48
+k=1
+
+import pandas
+from pandas import DataFrame, Series
+import statsmodels.formula.api as sm
+result= sm.OLS (Y,X).fit()
+print(result.summary())
+
+#print(Y,X,'lol')
+
+E=result.resid
+print(E)
+
+import matplotlib.pyplot as plt
+from scipy.stats import norm,kstest
+from numpy import arange
+
+plt.figure(figsize=(9,6))
+
+histData=plt.hist(E)
+
+range_ = arange(min(E),max (E), 0.05)
+coefY = len(E)*(histData[1][1]-histData[1][0])
+plt.plot(range_,
+        [norm(E.mean(),E.std()).pdf(x)*coefY for x in range_],
+        color='r')
+
+plt.xticks(histData[1])
+
+KS_maxD, KS_PValue = kstest(E, cdf='norm', args=(E.mean(), E.std()))
+
+plt.title("Histogram of the distribution of regression residues\n"+
+          "Distribution: Normal\n"+
+          "Kolmogorov-Smirnov test = {:.5}, p-value ={:.5}".format(KS_maxD,KS_PValue), fontsize=15)
+
+plt.ylabel("No. of observations", fontsize=12)
+plt.xlabel('Category (upper limits)', fontsize=12)
+plt.grid()
+plt.show()
+
+%matplotlib inline
+import matplotlib.pyplot as plt
+import numpy as np
+xmin=1
+xmax=Y.shape[0]
+dx=1
+
+xlist=plt.mlab.frange (xmin,xmax,dx)
+
+ylist=E
+
+plt.plot(xlist, ylist)
+
+plt.show()
+
+b=np.linalg.inv(np.dot(X.T,X)).dot(X.T).dot(Y)
+Yi=np.dot(X,b)
+E=Y-Yi
+print(E)
+
+eps=0.001 
+Ye=np.copy(E[1:])
+Xe=np.copy(E[:n])
+r_new = 10 
+Y_new = Ye 
+
+print('\n')
+#print(Ye)
+#print('\n')
+#print(Xe)
+
+while(1): 
+    r = 1/(np.dot(Xe.T,Xe))*(np.dot(Xe.T,Ye)) 
+    Cov = (1/(1-r**2))*((-r)*np.eye(n+1,n+1,-1)+(1+r**2)*np.eye(n+1,n+1,0)+(-r)*np.eye(n+1,n+1,1)) 
+    Cov[0,0]=1 
+    Cov[n,n]=1 
+    b_new=np.linalg.inv(np.dot(X.T,Cov).dot(X)).dot(np.dot(X.T,Cov)).dot(Y) 
+    e_new = Y - np.dot(X,b_new) 
+    Ye = np.copy(e_new[1:]) 
+    Xe = np.copy(e_new[:n]) 
+    print(b_new) 
+    print('\n') 
+    if (abs(r_new - r[0][0])<= eps): 
+        break 
+    r_new = r[0][0]
+
+DW=(((Ye-Xe)**2).T.dot(np.ones((Ye.shape[0], 1))))/((E**2).T.dot(np.ones((E.shape[0],1))))
+DW= DW[0,0]
+print("DW: %.3f"%DW)
+
+S = ((Y-X.dot(b_new)).T.dot(Cov).dot(Y-X.dot(b_new)))*(1/(n-k))
+Eb = S*np.linalg.inv(np.dot(X.T,Cov).dot(X))
+print(Eb.diagonal())
+
+1. подгрузили пакеты, выгрузили таблицу
+2. вывели оценки коэффициентов, все остатки
+3. гистограмма остатков
+4. график
+5. сдвинаем столбцы и строим ОЛММР
+6. Дарбин-Уотсон

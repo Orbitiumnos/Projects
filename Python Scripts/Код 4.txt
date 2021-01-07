@@ -1,0 +1,201 @@
+import pandas as pd
+data = pd.read_excel('C:/Program1/Sample/Info4.xlsx', 'Лист2')
+data
+import statsmodels.formula.api as smf
+
+def forward_selected(data, response):
+    remaining = set(data.columns)
+    remaining.remove(response)
+    selected = []
+    current_score, best_new_score = 0.0, 0.0
+    while remaining and current_score == best_new_score:
+        scores_with_candidates = []
+        for candidate in remaining:
+            formula = "{} ~ {}".format(response,' + '.join(selected + [candidate]))
+            score = smf.ols(formula, data).fit().rsquared_adj
+            scores_with_candidates.append((score, candidate))
+        scores_with_candidates.sort()
+        best_new_score, best_candidate = scores_with_candidates.pop()
+        if current_score < best_new_score:
+            remaining.remove(best_candidate)
+            selected.append(best_candidate)
+            current_score = best_new_score
+    formula = "{} ~ {}".format(response,' + '.join(selected))
+    model = smf.ols(formula, data).fit()
+    return model
+
+model = forward_selected(data.loc[:, ['y', 'x4', 'x5', 'x6']], 'y') #применение функции к регрессии на количественные объясняющие
+print(model.summary()) # результаты после устранения мультиколлинеарности
+
+import matplotlib.pyplot as plt
+from scipy.stats import norm, kstest
+from numpy import arange
+plt.figure(figsize=(9, 6))
+histData = plt.hist(model.resid)
+range_ = arange(min(model.resid), max(model.resid), 0.05)
+coefY = len(model.resid) * (histData[1][1] - histData[1][0])
+plt.plot(range_,[norm(model.resid.mean(), model.resid.std()).pdf(x) * coefY for x in range_],color='r')
+plt.xticks(histData[1])
+KS_maxD, KS_PValue = kstest(model.resid, cdf='norm', args=(model.resid.mean(), model.resid.std()))
+plt.title("Histogram of the distribution of regression residues\n" +"Distribution: Normal\n" +"Kolmogorov-Smirnov test = {:.5}, p-value = {:.5}".format(KS_maxD, KS_PValue), fontsize=18)
+plt.ylabel("No. of observations", fontsize=15)
+plt.xlabel("Category (upper limits)", fontsize=15)
+plt.grid()
+
+plt.show()
+
+columns = list(['x7','x8','x10']) # качественные столбцы - каждый вводит свои
+for col in columns: #для каждого из признаков
+    values = sorted(list(set(data[col])))[:-1] #определяем множество градаций отдельного признака,сортируем его в лексикографическом порядке и в values записываем это множество без последнего элемента, тк число вводимых переменных на 1 меньше числа градаций
+    for i in range(len(values)): #для каждой вновь вводимой фиктивной переменной
+        data = data.assign(newVariable = lambda x : x[col] == values[i]) # создание соотв. столбца со значениями true/false
+        data.newVariable = data.newVariable.apply(int) # перевод true/false в 1/0
+        data.rename(columns={'newVariable' : "d_{}_{}".format(col, i + 1)}, inplace=True) # переименование
+        print("-" * 10) # раздельная черта
+        print("d_{}_{} = 1, {} = {}".format(col, i + 1, col, values[i])) #написание правила введения фикт. переменной
+        print("d_{}_{} = 0, иначе".format(col, i + 1),'\n')
+    data = data.drop(columns=[col]) #удаляем столбец с качественным признаком
+
+data.head(10)
+
+import numpy as np #подключаем библиотеку "numpy"
+#Сортируем значения зависимой переменной Y в завимости от значений d_x1_1
+#print (data)
+#print(data[data['d_x7_1'] == 0 ]['y'], 'lol lol lol')
+
+y1 = data[data['d_x7_1'] == 0 ]['y']
+y2 = data[data['d_x7_1'] == 1 ]['y'] #Сортируем значения признака X4 в зависимости от значений d_x1_1
+x1 = data[data['d_x7_1'] == 0 ]['x4']
+x2 = data[data['d_x7_1'] == 1 ]['x4'] #Сортируем значения признака X5 в зависимости от значений d1_x1_1
+z1 = data[data['d_x7_1'] == 0 ]['x5']
+z2 = data[data['d_x7_1'] == 1 ]['x5'] #объявляем функцию
+m1 = data[data['d_x7_1'] == 0 ]['x6']
+m2 = data[data['d_x7_1'] == 1 ]['x6']
+
+def f_value(y1, y2, x1, x2, z1, z2, m1, m2):
+    def find_rss (Y, X, Z, M):
+        A = np.vstack([ np.ones(len(X)),X, Z, M]).T #формируем матрицу X
+        rss = np.linalg.lstsq(A, Y)[1] #функция для расчета значения остаточной дисперсии
+        length = len(Y) #в этой переменной хранится длина вектора значений Y
+        return (rss, length) #считаем Q0(дисперсию) для всей выборки
+    rss_total, n_total = find_rss(np.append(y1, y2), np.append(x1, x2), np.append(z1 ,z2), np.append(m1,m2))
+    print ('Q0 =',rss_total[0]) #считаем Q1(дисперсию) для первой подвыборки
+    rss_1, n_1 = find_rss(y1, x1, z1, m1)
+    print ('Q1 =',rss_1[0]) #считаем Q2(дисперсию) для второй подвыборки
+    rss_2, n_2 = find_rss(y2, x2, z2, m2)
+    print ('Q2 =',rss_2[0])
+    chow_nom = (rss_total - (rss_1 + rss_2)) / (3+1) #считаем числитель расчетной статистики критерия Чоу
+    chow_denom = (rss_1 + rss_2) / (n_1 + n_2 - 3*2 -2) #считаем знаменатель расчетной статистики критерия Чоу
+    print (n_1,',',n_2)
+    return chow_nom / chow_denom #получаем значение расчетной статистики критерия Чоу
+
+final = f_value (y1, y2, x1, x2, z1, z2, m1, m2)
+final = final[0]
+print ('Chow_test =',final)
+
+from scipy.stats import f
+x = f.ppf (0.95,4,109) #находим критическое значение статистики Фишера
+print ('Chow_test_crit =',x)
+#сравниваем критическое значение статистики с расчетным
+if x>final:
+    print('{:.3f}'.format(x), ">", '{:.3f}'.format(final), "=> Однородная выборка\n")
+else:
+    print('{:.3f}'.format(x), "<", '{:.3f}'.format(final), "=> Неоднородная выборка\n")
+
+#---------------------------------------------------------------------------------------------------
+
+y1 = data[data['d_x8_1'] == 0 ]['y']
+y2 = data[data['d_x8_1'] == 1 ]['y'] #Сортируем значения признака X4 в зависимости от значений d_x1_1
+x1 = data[data['d_x8_1'] == 0 ]['x4']
+x2 = data[data['d_x8_1'] == 1 ]['x4'] #Сортируем значения признака X5 в зависимости от значений d1_x1_1
+z1 = data[data['d_x8_1'] == 0 ]['x5']
+z2 = data[data['d_x8_1'] == 1 ]['x5'] #объявляем функцию
+m1 = data[data['d_x8_1'] == 0 ]['x6']
+m2 = data[data['d_x8_1'] == 1 ]['x6']
+
+def f_value(y1, y2, x1, x2, z1, z2, m1, m2):
+    def find_rss (Y, X, Z, M):
+        A = np.vstack([ np.ones(len(X)),X, Z, M]).T #формируем матрицу X
+        rss = np.linalg.lstsq(A, Y)[1] #функция для расчета значения остаточной дисперсии
+        length = len(Y) #в этой переменной хранится длина вектора значений Y
+        return (rss, length) #считаем Q0(дисперсию) для всей выборки
+    rss_total, n_total = find_rss(np.append(y1, y2), np.append(x1, x2), np.append(z1 ,z2), np.append(m1,m2))
+    print ('Q0 =',rss_total[0]) #считаем Q1(дисперсию) для первой подвыборки
+    rss_1, n_1 = find_rss(y2, x2, z2, m2)
+    print ('Q1 =',rss_1[0]) #считаем Q2(дисперсию) для второй подвыборки
+    rss_2, n_2 = find_rss(y1, x1, z1, m1)
+    print ('Q2 =',rss_2[0])
+    chow_nom = (rss_total - (rss_1 + rss_2)) / (3+1) #считаем числитель расчетной статистики критерия Чоу
+    chow_denom = (rss_1 + rss_2) / (n_1 + n_2 - 3*2 -2) #считаем знаменатель расчетной статистики критерия Чоу
+    print (n_1,',',n_2)
+    return chow_nom / chow_denom #получаем значение расчетной статистики критерия Чоу
+
+final = f_value (y1, y2, x1, x2, z1, z2, m1, m2)
+final = final[0]
+print ('Chow_test =',final)
+
+from scipy.stats import f
+x = f.ppf (0.95,4,109) #находим критическое значение статистики Фишера
+print ('Chow_test_crit =',x)
+#сравниваем критическое значение статистики с расчетным
+if x>final:
+    print('{:.3f}'.format(x), ">", '{:.3f}'.format(final), "=> Однородная выборка\n")
+else:
+    print('{:.3f}'.format(x), "<", '{:.3f}'.format(final), "=> Неоднородная выборка\n")
+
+#---------------------------------------------------------------------------------------------------
+
+y1 = data[data['d_x10_1'] == 0 ]['y']
+y2 = data[data['d_x10_1'] == 1 ]['y'] #Сортируем значения признака X4 в зависимости от значений d_x1_1
+x1 = data[data['d_x10_1'] == 0 ]['x4']
+x2 = data[data['d_x10_1'] == 1 ]['x4'] #Сортируем значения признака X5 в зависимости от значений d1_x1_1
+z1 = data[data['d_x10_1'] == 0 ]['x5']
+z2 = data[data['d_x10_1'] == 1 ]['x5'] #объявляем функцию
+m1 = data[data['d_x10_1'] == 0 ]['x6']
+m2 = data[data['d_x10_1'] == 1 ]['x6']
+
+def f_value(y1, y2, x1, x2, z1, z2, m1, m2):
+    def find_rss (Y, X, Z, M):
+        A = np.vstack([ np.ones(len(X)),X, Z, M]).T #формируем матрицу X
+        rss = np.linalg.lstsq(A, Y)[1] #функция для расчета значения остаточной дисперсии
+        length = len(Y) #в этой переменной хранится длина вектора значений Y
+        return (rss, length) #считаем Q0(дисперсию) для всей выборки
+    rss_total, n_total = find_rss(np.append(y1, y2), np.append(x1, x2), np.append(z1 ,z2), np.append(m1,m2))
+    print ('Q0 =',rss_total[0]) #считаем Q1(дисперсию) для первой подвыборки
+    rss_1, n_1 = find_rss(y2, x2, z2, m2)
+    print ('Q1 =',rss_1[0]) #считаем Q2(дисперсию) для второй подвыборки
+    rss_2, n_2 = find_rss(y1, x1, z1, m1)
+    print ('Q2 =',rss_2[0])
+    chow_nom = (rss_total - (rss_1 + rss_2)) / (3+1) #считаем числитель расчетной статистики критерия Чоу
+    chow_denom = (rss_1 + rss_2) / (n_1 + n_2 - 3*2 -2) #считаем знаменатель расчетной статистики критерия Чоу
+    print (n_1,',',n_2)
+    return chow_nom / chow_denom #получаем значение расчетной статистики критерия Чоу
+
+final = f_value (y1, y2, x1, x2, z1, z2, m1, m2)
+final = final[0]
+print ('Chow_test =',final)
+
+from scipy.stats import f
+x = f.ppf (0.95,4,109) #находим критическое значение статистики Фишера
+print ('Chow_test_crit =',x)
+#сравниваем критическое значение статистики с расчетным
+if x>final:
+    print('{:.3f}'.format(x), ">", '{:.3f}'.format(final), "=> Однородная выборка\n")
+else:
+    print('{:.3f}'.format(x), "<", '{:.3f}'.format(final), "=> Неоднородная выборка\n")
+    
+#---------------------------------------------------------------------------------------------------
+
+res = forward_selected(data, 'y') #Применение функции по устранению мультиколлинеарности регрессии на все переменные
+print(res.summary()) #результаты
+
+import matplotlib.pyplot as plt
+from scipy.stats import norm, kstest
+from numpy import arange
+plt.figure(figsize=(9, 6))
+
+1. включение и оценки коэффициентов
+2. гистограмма остатков
+3. переводим качественные переменные в 1/0 (делаем новые столбцы)
+4. сортируем значения относительно варианта, находим дисперсии, подвыборки, их дисперсии, критерий Чоу, сравниваем с критическим значением
+5. включение и оценки

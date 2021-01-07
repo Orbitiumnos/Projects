@@ -1,0 +1,9 @@
+https://calendar.google.com/calendar/render?action=TEMPLATE
+
+&text=Bithday
+
+&dates=20201231T193000Z/20201231T223000Z
+
+&details=With%20clowns%20and%20stuff
+
+&location=North%20Pole

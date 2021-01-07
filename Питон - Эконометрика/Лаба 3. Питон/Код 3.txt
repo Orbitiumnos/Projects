@@ -1,0 +1,122 @@
+import matplotlib.pyplot as plt
+import numpy as np
+import statsmodels.api as sm
+from statsmodels.stats.outliers_influence import variance_inflation_factor
+from statsmodels.stats.stattools import durbin_watson
+from statsmodels.stats import diagnostic as diag
+import scipy.stats as stats
+import pandas as pd
+import statsmodels.formula.api as smf
+from statsmodels.formula.api import ols
+from sklearn.metrics import mean_squared_error, r2_score
+ 
+def show_plot(data, line=False, label='Распределение регрессионых остатков'):
+    format_line = 'o'
+    if line:
+        format_line = 'r-o'
+    x_data = list(range(len(data)))
+   
+    plt.plot(x_data,data,format_line, color='#1f77b4')
+    plt.axhline(y=0, linewidth=1, color='#1f77b4')
+    plt.xlabel(label)
+ 
+    plt.show()    
+ 
+def show_hist(data):
+    plt.xlabel('Остатки')
+    residuals = sorted(data)
+    normal_distribution = stats.norm.pdf(residuals, np.mean(residuals), np.std(residuals))
+    plt.plot(residuals, normal_distribution*50)
+    plt.hist(data)
+    plt.show()
+def generate_sigma(p, n):
+    sigma = []
+    for i in range(n):
+        temp = [p**power for power in range(n-i)]
+       
+        temp_len = len(temp)
+        temp = [p**x for x in range( n-temp_len,0,-1)] + temp
+        sigma.append(temp)
+    return pd.DataFrame(sigma)
+ 
+def ortatt(model_resid, prev_p=None, presize=0.008, iteration=1):
+    # процедура Кохрейн-Орттата
+    resid = model_resid[:-1].copy().to_frame().reset_index()
+    del resid['index']
+    resid_1 = model_resid[1:].copy().to_frame().reset_index()
+    del resid_1['index']
+    residT = resid.T  # Транспонирование
+    powres = residT.dot(resid) # Умножение матрицы
+ 
+    powres_inv = pd.DataFrame(np.linalg.inv(powres.values), powres.columns, powres.index)
+    mul_poweres_inv_residT = powres_inv.dot(residT)
+    mul_mul_poweres_inv_residT = mul_poweres_inv_residT.dot(resid_1)
+    p0 = mul_mul_poweres_inv_residT.iloc[0,0]
+   
+    print("Итерация №{} - P={}".format(iteration, p0))
+ 
+       
+    sigma0 = generate_sigma(p0, model_resid.count())
+    sigma0_inv = pd.DataFrame(np.linalg.inv(sigma0.values), sigma0.columns, sigma0.index)
+   
+    ones = [1 for x in range(len(df))]
+    se_ones = pd.Series(ones)
+    x=df.iloc[:,1:].copy().reset_index()
+    y = df.iloc[:,:1].copy().reset_index()
+    del y["index"]
+    del x["index"]
+    x["intercept"] = se_ones.values
+    xT_sigma0_inv_x = x.T.dot(sigma0_inv).dot(x)
+    xT_sigma0_inv_x_inv = pd.DataFrame(np.linalg.inv(xT_sigma0_inv_x.values), xT_sigma0_inv_x.columns, xT_sigma0_inv_x.index)
+    bomnk = xT_sigma0_inv_x_inv.dot(x.T.dot(sigma0_inv).dot(y))
+    y2 = x.dot(bomnk)
+    e2 = y - y2
+    if prev_p and abs(prev_p-p0)< presize:
+        return bomnk, e2
+    return ortatt(e2.iloc[:,0].copy(), p0, iteration=iteration+1)
+ 
+def forward_selected(data, response):
+    remaining = set(data.columns)
+    remaining.remove(response)
+    selected = []
+    current_score, best_new_score = 0.0, 0.0
+    while remaining and current_score == best_new_score:
+        scores_with_candidates = []
+        for candidate in remaining:
+            formula = "{} ~ {} + 1".format(response,
+                                           ' + '.join(selected + [candidate]))
+            score = smf.ols(formula, data).fit().rsquared_adj
+            scores_with_candidates.append((score, candidate))
+        scores_with_candidates.sort()
+        best_new_score, best_candidate = scores_with_candidates.pop()
+        if current_score < best_new_score:
+            remaining.remove(best_candidate)
+            selected.append(best_candidate)
+            current_score = best_new_score
+    formula = "{} ~ {} + 1".format(response,
+                                   ' + '.join(selected))
+    model = smf.ols(formula, data).fit()
+    return model
+ 
+ 
+df = pd.read_excel('C:/Program1/Sample/Info3.xlsx', index_no=0)  # Загрузка данных в переменннуб
+y = df.iloc[:,:1].copy()
+print(df)
+#model = ols("y~x1+x2+x3+x4+x8", data=df).fit()
+model = forward_selected(df, 'y')  # Регрессия с включением
+ 
+print(model.summary())  # Вывод информации о регрессии
+show_plot(model.resid, line=True)
+show_hist(model.resid)
+ 
+ 
+bomnk, resid_last = ortatt(model.resid)  # Кохрейна-Ортатта
+print(bomnk)
+ 
+sume = resid_last.pow(2).sum()[0]
+y_mean = y-y.mean()
+sumy = y_mean.pow(2).sum()[0]
+R2 = 1 - sume/sumy
+print(R2)
+ 
+show_plot(resid_last, line=False)

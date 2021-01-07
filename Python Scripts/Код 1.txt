@@ -1,0 +1,111 @@
+import matplotlib.pyplot as plt
+import numpy as np
+import statsmodels.api as sm
+from statsmodels.stats.outliers_influence import variance_inflation_factor
+from statsmodels.stats.stattools import durbin_watson
+from statsmodels.stats import diagnostic as diag
+import scipy.stats as stats
+import pandas as pd
+import statsmodels.formula.api as smf
+from statsmodels.formula.api import ols
+from sklearn.metrics import mean_squared_error, r2_score
+from pandas import read_excel
+
+workbook = 'C:/Program1/Info.xlsx'
+sheetName = 'data'
+data = read_excel(io = workbook, sheet_name = 'Лист1')
+t = data.head(5)
+# print(t)
+
+# IndependentVariables = data.drop(columns=['D'])
+del_d = data.drop(columns=['Y'])
+print (del_d.describe()) #вывод средних значений и прочего (оценки независимых переменных)
+print (del_d)
+
+from statsmodels.formula.api import ols
+formula = "{} ~ {}".format('Y', '+'.join(del_d.columns.tolist())) (опишем формулу модели регрессии)
+# print(formula)
+
+model = ols(formula=formula, data=data).fit() #оценки коэффициентов уравнения регрессии
+print(model.summary())
+
+model.resid.head()
+
+import matplotlib.pyplot as plt
+from scipy.stats import norm, kstest
+from numpy import arange
+
+# Зададим размер гистограммы
+plt.figure(figsize=(9, 6))
+
+# C помощью функции Hist, построим гистограмму остатков
+histData = plt.hist(model.resid) #numpy.histogram
+
+# Cтроим красную кривую, соответствующую нормальному распределению
+range_ = arange(min(model.resid), max(model.resid), 0.05)
+normModel = norm(model.resid.mean(), model.resid.std())
+coefY = len(model.resid) * max([1, (max(histData[0])) // (normModel.pdf(model.resid.mean()) * len(model.resid))])
+plt.plot(range_, [normModel.pdf(x) * coefY for x in range_], color='r')
+
+# Нанесем деления на ось абцисс, сooтветствующие верхним границам интервалов разбиений
+plt.xticks(histData[1])
+
+# Произведем тест Колмогорова-Смирнова о нормальном распределении
+KS_maxD, KS_Pvalue = kstest(model.resid, cdf='norm', args=(model.resid.mean(), model.resid.std()))
+
+# Название гистограммы
+plt.title("Histogramm of the distrubution of regression residuals\n" +
+          "Distribution: normal\n" +
+          "Kolmogorov-Smirnov teat = {:.5}, p-value = {:.5}".format(KS_maxD, KS_Pvalue), fontsize=18)
+
+# Подпись осей
+plt.ylabel("No. of observations", fontsize=15)
+plt.xlabel("Category (upper limits)", fontsize=15)
+# Поcтроим масштабную сетку
+plt.grid()
+# Вывод гистограммы
+plt.show()
+
+# Оценка матрицы парных коэф. корреляции
+print('начало матрицы')
+print(data.corr())
+print('конец матрицы')
+
+# Коэф. детерминации для мультиколлинеарности
+from statsmodels.formula.api import ols
+variables = sorted(del_d.columns.tolist()) #tolist - копируем таблицу
+for response in variables:
+    print("R^2({}): {}".format(response,
+                               ols(formula="{} ~ {}".format(response, ' + '.join(set(variables) - set([response]))),
+                                   data=data).fit().rsquared))
+
+#Метод пошаг.регр. с вкл.пер.
+from statsmodels.formula.api import ols
+def forward_selected(data, response):
+   remaining = set(data.columns)
+   remaining.remove(response)
+   selected = []
+   currentScore, bestNewScore = 0.0, 0.0
+   while remaining and currentScore == bestNewScore:
+       scoresWithCandidates = []
+       for candidate in remaining:
+           score = ols(formula="{} ~ {}".format(response, ' + '.join(selected + [candidate])), data=data).fit().rsquared_adj
+           scoresWithCandidates.append((score, candidate)) #.append - добавл элем в конец списка
+           scoresWithCandidates.sort()
+           bestNewScore, bestCandidate = scoresWithCandidates.pop() #.pop - удаляет i элем и возвр его
+           if currentScore < bestNewScore:
+               remaining.remove(bestCandidate)
+               selected.append(bestCandidate)
+               currentScore = bestNewScore
+               return ols(formula = "{} ~ {}".format(response, ' + '.join(sorted(selected))), data=data).fit()
+
+
+forwardModel = forward_selected(data, 'Y')
+print(forwardModel.summary())
+
+1. подгружаем пакеты, выгружаем таблицу
+2. дропаем y, оцениваем независимые переменные
+3. строим модель регрессии и находим ее оценки
+4. строим гистограмму с тестом К-С
+5. корреляционная матрица и коэффициенты детерминации
+6. пошаговая регрессия с включением

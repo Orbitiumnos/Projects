@@ -1,0 +1,1 @@
+select prod_id from sh.sales;
