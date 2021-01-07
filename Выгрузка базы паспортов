@@ -1,9 +1,0 @@
-'http://guvm.mvd.ru/upload/expired-passports/list_of_expired_passports.csv.bz2'
-
-
-import sys, time, bz2, os, argparse
-import requests  # pip3 install requests
-import multiprocessing as mp
-from datetime import datetime
-from functools import partial
-from math import ceil
