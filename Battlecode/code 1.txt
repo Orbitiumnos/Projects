@@ -1,0 +1,32 @@
+import sys
+import math
+
+# Auto-generated code below aims at helping you parse
+# the standard input according to the problem statement.
+
+b = 0
+b2 = 0
+
+n = int(raw_input())  # the number of temperatures to analyse
+
+if n > 0:
+    tabl = [0 for i in range(0,n)]
+else: tabl = [0]
+
+for i in raw_input().split():
+    # t: a temperature expressed as an integer ranging from -273 to 5526
+    t = int(i)
+    tabl[b] = t
+    #print ("tabl:",tabl[b])
+    b = b + 1
+    
+min = tabl[0]
+    
+while b2 < n:
+    if abs(min) > abs(tabl[b2]):
+        min = (tabl[b2])  
+    elif abs(min) == abs(tabl[b2]):
+        min = abs(tabl[b2])
+    
+    b2 = b2+1
+print (min)
